@@ -1,0 +1,39 @@
+# Job Hunter local state, keep private, do not commit
+
+# Saver runtime
+runner/saver.log
+runner/heartbeat.txt
+runner/watchdog-last.txt
+runner/watchdog-off.txt
+runner/glance/
+
+# Feedback inbox (personal, swept and archived locally)
+inputs/corrections-drops/*
+!inputs/corrections-drops/README.md
+
+# Your real inputs (personal)
+inputs/skill-test-results.md
+inputs/linkedin.pdf
+inputs/grades/
+
+# Your personal profile evidence (never publish)
+profile/raw/
+
+# Prepared applications and generated day artifacts (personal)
+packages/
+briefs/
+archive/
+
+# Personal memory overrides (the schema files are tracked; your filled-in data is not)
+# Uncomment the next lines once you have replaced the demo data with your own:
+# memory/journey.md
+# memory/applications.md
+# memory/companies.md
+# memory/corrections-log.md
+# memory/shaykh-rulings.md
+
+# OS and Python cruft
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

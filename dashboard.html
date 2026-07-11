@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Hunter</title>
+<link rel="icon" href="runner/job-hunter.ico">
+<style>
+  :root{color-scheme:dark;
+    --canvas:#04060a; --card:#0a0f1a; --border:#1c2740; --ink:#dbe4f0; --dim:#8494ac;
+    --green:#7cd99e; --amber:#f5c46f; --purple:#b06bff; --blue:#4a8fff; --codeink:#8fd0ff; --codebg:#10182a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.55}
+  .shell{display:grid;grid-template-columns:216px minmax(0,1fr) 250px;min-height:100vh}
+  @media(max-width:1360px){.shell{grid-template-columns:216px minmax(0,1fr)}.rail{display:none}}
+  .side{border-right:1px solid var(--border);background:#060a12;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 14px}
+  .brand b{font-size:18px;background:linear-gradient(90deg,#4a8fff,#b06bff,#e068ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nav button{display:block;width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:10px;padding:10px 12px;margin:2px 0;color:var(--dim);font-size:14.5px;cursor:pointer;font-family:inherit}
+  .nav button:hover{background:#0c1322;color:var(--ink)}
+  .nav button.on{background:rgba(176,107,255,.12);border-color:rgba(176,107,255,.35);color:#fff}
+  .side .foot{margin-top:auto;font-size:12px;color:var(--dim);padding:10px 8px}
+  #saverdot{display:inline-block;width:8px;height:8px;border-radius:99px;background:#f08a8a;margin-right:6px;vertical-align:middle}
+  #saverdot.on{background:var(--green)}
+  .main{padding:26px 30px 110px;max-width:920px}
+  .kicker{letter-spacing:.25em;font-size:11px;color:var(--dim);text-transform:uppercase}
+  h1{margin:2px 0 4px;font-size:28px;background:linear-gradient(90deg,#4a8fff,#b06bff,#e068ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  h2{font-size:19px;margin:26px 0 10px;color:#fff;border-bottom:1px solid var(--border);padding-bottom:7px}
+  .panel{display:none}.panel.on{display:block}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:center}
+  .stat b{display:block;font-size:24px;background:linear-gradient(90deg,#4a8fff,#b06bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{font-size:12px;color:var(--dim)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 17px;margin:10px 0;font-size:14.5px}
+  .card .t{color:#fff;font-weight:600;font-size:15.5px}
+  .card .m{color:var(--dim);font-size:13.5px;margin-top:2px}
+  .chip{display:inline-block;font-size:11.5px;letter-spacing:.06em;border-radius:999px;padding:2px 11px;margin-left:8px;vertical-align:middle}
+  .chip.wait{background:rgba(245,196,111,.12);border:1px solid var(--amber);color:var(--amber)}
+  .chip.clear{background:rgba(124,217,158,.12);border:1px solid var(--green);color:var(--green)}
+  .chip.urgent{background:rgba(240,138,138,.14);border:1px solid #f08a8a;color:#f08a8a}
+  a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+  .note{background:rgba(176,107,255,.07);border:1px solid rgba(176,107,255,.3);border-left:4px solid var(--purple);border-radius:10px;padding:11px 15px;margin:12px 0;font-size:14px}
+  .ask{background:rgba(245,196,111,.06);border:1px solid rgba(245,196,111,.3);border-left:4px solid var(--amber);border-radius:12px;padding:13px 16px;margin:12px 0;font-size:14px}
+  .tip{background:rgba(74,143,255,.06);border:1px solid rgba(74,143,255,.3);border-left:4px solid var(--blue);border-radius:12px;padding:13px 16px;margin:12px 0;font-size:14px}
+  .rule{background:rgba(124,217,158,.05);border:1px solid rgba(124,217,158,.25);border-left:4px solid var(--green);border-radius:12px;padding:13px 16px;margin:12px 0;font-size:14px}
+  code,.path{font-family:Consolas,monospace;font-size:12.5px;background:var(--codebg);border:1px solid #223;border-radius:6px;padding:1px 6px;color:var(--codeink);word-break:break-all}
+  table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.5px}
+  th,td{border:1px solid var(--border);padding:7px 10px;text-align:left}
+  th{color:#fff;background:#0c1018}
+  .cd{font-weight:600;color:#f08a8a}.cd.ok{color:var(--amber)}
+  .sc{color:var(--dim);font-size:12.5px}
+  .q{padding:11px 0;border-top:1px solid #121a2c}
+  .ql{font-size:14.5px;margin-bottom:7px}
+  .chips button{background:#0e1626;border:1px solid var(--border);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13.5px;cursor:pointer;margin:3px 6px 3px 0;font-family:inherit}
+  .chips button.sel{background:rgba(124,217,158,.14);border-color:var(--green);color:var(--green);font-weight:600}
+  input[type=text],textarea{width:100%;background:var(--codebg);border:1px solid var(--border);border-radius:8px;color:var(--codeink);font-family:Consolas,monospace;font-size:13px;padding:8px 11px}
+  input.oth{margin-top:6px;font-size:12.5px}
+  textarea{min-height:52px;resize:vertical}
+  .btn{border:none;border-radius:10px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn.primary{background:linear-gradient(90deg,#2f6fe0,#8a4fd8);color:#fff}
+  .btn.small{padding:8px 14px;font-size:13.5px;background:#0e1626;color:var(--ink);border:1px solid var(--border)}
+  .rail{border-left:1px solid var(--border);background:#060a12;padding:22px 16px;position:sticky;top:0;height:100vh;font-size:13.5px}
+  .rail h3{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:18px 0 8px}
+  .rail .item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin:7px 0}
+  /* structured cards */
+  .cardhead{font-size:16px;font-weight:700;color:#fff;margin:0 0 9px;padding-bottom:7px;border-bottom:1px solid #16203a}
+  .cardhead .cid{color:var(--purple);margin-right:8px}
+  .tip .cardhead{border-bottom-color:rgba(74,143,255,.25)} .tip .cardhead .cid{color:var(--blue)}
+  .ask .cardhead{border-bottom-color:rgba(245,196,111,.25)} .ask .cardhead .cid{color:var(--amber)}
+  .rule .cardhead{border-bottom-color:rgba(124,217,158,.25)} .rule .cardhead .cid{color:var(--green)}
+  .kv{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:13.8px}
+  .kv b{color:var(--dim);font-weight:600;text-align:right}
+  .tip .kv b{color:var(--blue)} .ask .kv b{color:var(--amber)} .rule .kv b{color:var(--green)} .note .kv b{color:var(--purple)}
+  .kv span{color:var(--ink)}
+  /* app decisions + sorting */
+  .dec button{background:#0e1626;border:1px solid var(--border);color:var(--ink);border-radius:999px;padding:5px 13px;font-size:12.5px;cursor:pointer;margin:6px 6px 0 0;font-family:inherit}
+  .dec button.acc.sel{background:rgba(124,217,158,.16);border-color:var(--green);color:var(--green);font-weight:600}
+  .dec button.rej.sel{background:rgba(240,138,138,.16);border-color:#f08a8a;color:#f08a8a;font-weight:600}
+  .card.rejected{opacity:.45}
+  .card.expired{opacity:.4}
+  .sortbar{margin:10px 0 4px}
+  .sortbar button{background:#0e1626;border:1px solid var(--border);color:var(--dim);border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer;margin:0 6px 6px 0;font-family:inherit}
+  .sortbar button.sel{background:rgba(176,107,255,.14);border-color:var(--purple);color:#fff}
+  .jlog{font-size:12.5px;color:var(--dim);margin-top:5px}
+  .jlog span{color:var(--green)}
+  /* flow diagram */
+  .flow{display:flex;flex-direction:column;align-items:stretch;gap:0;margin:14px 0}
+  .fstep{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 16px;font-size:14px}
+  .fstep b{color:#fff}
+  .fstep.you{border-color:rgba(124,217,158,.5);border-left:4px solid var(--green)}
+  .fstep.gate{border-color:rgba(240,138,138,.45);border-left:4px solid #f08a8a}
+  .farrow{text-align:center;color:var(--purple);font-size:17px;line-height:1.3;padding:1px 0}
+  .fsplit{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#12331f;color:var(--green);border:1px solid var(--green);border-radius:10px;padding:9px 16px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
+  #toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="side">
+    <div class="brand" id="brandlogo" style="cursor:pointer">
+      <svg width="34" height="34" viewBox="0 0 256 256"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4a8fff"/><stop offset="55%" stop-color="#b06bff"/><stop offset="100%" stop-color="#e068ff"/></linearGradient></defs><rect width="256" height="256" rx="52" fill="#070b14"/><path d="M128 34 L206 79 L206 169 L128 214 L50 169 L50 79 Z" fill="none" stroke="url(#g)" stroke-width="11" stroke-linejoin="round"/><circle cx="128" cy="124" r="40" fill="none" stroke="url(#g)" stroke-width="8"/><circle cx="128" cy="124" r="13" fill="url(#g)"/></svg>
+      <b>Job Hunter</b>
+    </div>
+    <div class="nav">
+      <button data-p="overview" class="on">Overview</button>
+      <button data-p="apps">Applications</button>
+      <button data-p="journal">Journal</button>
+      <button data-p="prefs">Preferences</button>
+      <button data-p="skills">Skills &amp; Tests</button>
+      <button data-p="projects">Projects</button>
+      <button data-p="faith">Values queue</button>
+      <button data-p="tips">Tips</button>
+      <button data-p="about">How it works</button>
+    </div>
+    <div class="foot"><span id="saverdot"></span><span id="savertxt">saver: checking...</span><br>Job Hunter <b>v2.0</b> · demo data · make it yours via <code>SETUP.md</code></div>
+  </div>
+
+  <div class="main">
+
+    <section class="panel on" id="p-overview">
+      <div class="kicker">Mission control · demo</div>
+      <h1>Overview</h1>
+      <div class="stats">
+        <div class="stat"><b>3</b><span>prepared</span></div>
+        <div class="stat"><b>0</b><span>submitted</span></div>
+        <div class="stat"><b>0</b><span>responses</span></div>
+        <div class="stat"><b>1</b><span>values question</span></div>
+        <div class="stat"><b>0</b><span>interviews</span></div>
+      </div>
+      <div class="note" style="border-left-color:#f08a8a;border-color:rgba(240,138,138,.35)"><b style="color:#f08a8a">This is demo data.</b> Three fictional companies, fictional projects, all numbers marked demo. Follow <code>SETUP.md</code> to fill in your real profile, then say <code>Go</code> and this whole page regenerates from your own applications.</div>
+      <div class="note"><b>How the app works in one line:</b> every card here is something you can act on: review a suggested application, log where an application stands, tune your preferences, take a skill check, or read the plan. Nothing is ever submitted for you.</div>
+    </section>
+
+    <section class="panel" id="p-apps">
+      <h1>Applications</h1>
+      <div class="note">Demo cards below. On a real run each card links to its own application page (the full brief, the tailored CV and letter, a 3-minute quick-verify). Chances, distance and pay are rough model estimates, marked here as demo.</div>
+      <div class="sortbar" id="asort">
+        <button data-s="date" class="sel">newest</button>
+        <button data-s="chance">most likely to land</button>
+        <button data-s="dist">closest</button>
+        <button data-s="pay">pay per hour</button>
+        <button data-s="deal">AI best deal</button>
+      </div>
+      <div id="acards">
+      <div class="card appcard" data-app="demo_borealis_or-analyst-intern" data-date="2026-01-05" data-chance="20" data-dist="35" data-pay="4" data-deal="85"><span class="t">Borealis Logistics · OR Analyst Internship</span><span class="chip urgent" data-deadchip="2026-01-15">closes soon</span><span class="chip wait">waiting on you</span>
+        <div class="m">Demo City, ~35 min · 16 to 24 h/week · demo intern rate · halal CLEAR (demo verdict)<br><span class="cd" data-deadline="2026-01-15"></span> · <span class="sc">chance: demo estimate · best-deal 85/100 (demo): fits the hours, fixed deadline</span></div>
+        <div class="dec"><button class="acc" data-v="accepted">accept suggestion</button><button class="rej" data-v="rejected">reject</button></div></div>
+      <div class="card appcard" data-app="demo_cobalt_data-scientist-werkstudent" data-date="2026-01-04" data-chance="15" data-dist="50" data-pay="18" data-deal="72"><span class="t">Cobalt Health Analytics · Data Scientist (working student)</span><span class="chip wait">waiting on you</span>
+        <div class="m">Demo City, ~50 min · working student · demo rate ~18/h · calibrated modeling, your literal portfolio (demo)<br><span class="cd ok" data-posted="2026-01-02"></span> · <span class="sc">chance: demo estimate · best-deal 72/100 (demo): good pay, longer ride</span></div>
+        <div class="dec"><button class="acc" data-v="accepted">accept suggestion</button><button class="rej" data-v="rejected">reject</button></div></div>
+      <div class="card appcard" data-app="demo_meridian_bi-analyst-intern" data-date="2026-01-03" data-chance="18" data-dist="40" data-pay="5" data-deal="70"><span class="t">Meridian Semiconductors · BI Analyst Internship</span><span class="chip wait">waiting on you</span>
+        <div class="m">Demo City, ~40 min · internship · demo intern rate · dashboards and KPI reporting (demo)<br><span class="cd ok" data-posted="2025-12-20"></span> · <span class="sc">chance: demo estimate (rolling post, aging) · best-deal 70/100 (demo)</span></div>
+        <div class="dec"><button class="acc" data-v="accepted">accept suggestion</button><button class="rej" data-v="rejected">reject</button></div></div>
+      </div>
+      <p class="sc">Accepting adds an application to your Journal; rejecting greys it and tells the run why, to learn. Cards expire automatically when a deadline passes. All values above are demo placeholders.</p>
+    </section>
+
+    <section class="panel" id="p-journal">
+      <h1>Journal</h1>
+      <div class="note">Pick the new stage, add a note, press <b>Commit</b>. With the saver on (green dot, bottom left) it writes straight into the app; otherwise it downloads and gets swept. The run parses it into <span class="path">memory\journey.md</span>, moves the ledger, follows up in the brief. Rejections get a short reasons-hypothesis, never an autopsy; a landed job keeps logging your key activities.</div>
+      <div id="jrows"></div>
+      <div style="margin-top:14px"><button class="btn primary" id="dljournal">&#10003; Commit journal update</button> <span class="sc">only touched rows are included</span></div>
+      <h2>History (demo)</h2>
+      <table>
+        <tr><th>Application</th><th>Journey so far</th></tr>
+        <tr><td>Borealis Logistics OR Analyst intern</td><td>prepared &#8594; waiting on you (accepted in demo)</td></tr>
+        <tr><td>Cobalt Health Analytics data scientist</td><td>prepared &#8594; waiting on you</td></tr>
+        <tr><td>Meridian Semiconductors BI analyst intern</td><td>prepared &#8594; waiting on you</td></tr>
+        <tr><td>Older demo application (history)</td><td>submitted &#8594; ghosted (large pool, no warm contact, generic materials: all fixable)</td></tr>
+      </table>
+    </section>
+
+    <section class="panel" id="p-prefs">
+      <h1>Preferences</h1>
+      <div class="note">Answer like an interview; your current standing answers are preselected, and every question has an "other" field if no chip fits. <b>Commit</b> saves it; the run reads the result before every hunt. The values floor, honesty rules and prepare-only can never be changed from here. (Demo defaults shown; set your real ones in <span class="path">inputs\search-preferences.md</span> or here.)</div>
+      <div class="q" data-key="mix" data-label="Role mix this period"><div class="ql">Role mix right now</div>
+        <div class="chips"><button data-v="balanced" class="sel">balanced (current)</button><button data-v="more internships and working-student">more internships</button><button data-v="more entry-level full-time">more entry-level</button><button data-v="traineeships too (max 12 months)">traineeships too</button></div>
+        <input type="text" class="oth" placeholder="other, in your words..."></div>
+      <div class="q" data-key="hours" data-label="Hours per week available now"><div class="ql">Hours now</div>
+        <div class="chips"><button data-v="16 to 24 per week" class="sel">16 to 24 (current)</button><button data-v="under 16 per week">under 16</button><button data-v="24 to 32 per week">24 to 32</button><button data-v="flexible, role-dependent">flexible</button></div>
+        <input type="text" class="oth" placeholder="other..."></div>
+      <div class="q" data-key="mode" data-label="Work mode"><div class="ql">Remote / hybrid / on-site</div>
+        <div class="chips"><button data-v="any mode within commute rules" class="sel">any (current)</button><button data-v="remote or hybrid only">remote or hybrid only</button><button data-v="max 2 office days per week">max 2 office days</button><button data-v="on-site is fine anywhere in range">on-site fine</button></div>
+        <input type="text" class="oth" placeholder="other..."></div>
+      <div class="q" data-key="commute" data-label="Commute range"><div class="ql">Commute</div>
+        <div class="chips"><button data-v="base +45 min, an exception city OK for 2 to 3 office days" class="sel">current (45 min + exception)</button><button data-v="strictly base +45 min">strictly 45 min</button><button data-v="anywhere in country">anywhere in country</button></div>
+        <input type="text" class="oth" placeholder="other..."></div>
+      <div class="q" data-key="salary" data-label="Salary floor, gross per month"><div class="ql">Salary floor (entry-level roles)</div>
+        <div class="chips"><button data-v="no fixed floor, use market guidance" class="sel">market guidance (current)</button><button data-v="floor 3000">3000</button><button data-v="floor 3200">3200</button><button data-v="floor 3500">3500</button></div>
+        <input type="text" class="oth" placeholder="other (a number, a range, internship allowance floor...)"></div>
+      <div class="q" data-key="volume" data-label="Packages per run"><div class="ql">How many packages per run</div>
+        <div class="chips"><button data-v="3 to 7, quality first" class="sel">3 to 7 (current)</button><button data-v="1 to 3, only excellent fits">fewer, only excellent</button><button data-v="up to 10, wider net">more, wider net</button></div>
+        <input type="text" class="oth" placeholder="other..."></div>
+      <div class="q" data-key="free" data-label="Anything else, free words"><div class="ql">Anything else (companies to chase or avoid, sectors, timing...)</div>
+        <textarea placeholder="free text, the run obeys the newest statement"></textarea></div>
+      <div style="margin-top:14px"><button class="btn primary" id="dlprefs">&#10003; Commit preferences</button> <span class="sc">editing <span class="path">inputs\search-preferences.md</span> directly also works</span></div>
+    </section>
+
+    <section class="panel" id="p-skills">
+      <h1>Skills &amp; Tests</h1>
+      <div class="note">Demo skill rows. On a real run this table reads your calibrated levels (from the Skill Check plus your documented evidence) against current market demand.</div>
+      <table>
+        <tr><th>Market demand</th><th>Your level</th><th>Move</th></tr>
+        <tr><td>1. Python</td><td>working (demo)</td><td>facts on CV, no fluency adjectives; a Forge project rebuilds it</td></tr>
+        <tr><td>2. SQL</td><td>academic, deepening (demo)</td><td>one visible SQL project makes it provable</td></tr>
+        <tr><td>6. R</td><td>introductory (demo)</td><td>claimable as introductory only until a real project exists</td></tr>
+        <tr><td>7. Operations Research</td><td>working to solid (demo)</td><td>lead with it on OR roles</td></tr>
+      </table>
+      <h2>Your tests</h2>
+      <div class="card"><span class="t">Tier 1 · <a href="Job Hunter Skill Check.html">Skill Check</a></span><span class="chip wait">take it to calibrate</span>
+        <div class="m">Floor calibration: raw fluency so CVs never overshoot. Four modules (Python, SQL, R, Optimization and Statistics), skippable. Results apply to every document. Retake after any refresh week to raise tiers honestly.</div></div>
+      <div class="card"><span class="t">Tier 2 · Interview Gauntlet</span><span class="chip wait">generates on request</span>
+        <div class="m">Different in kind: domain cases probing depth, defending your own project numbers, your CV under fire, one business case. Grades into an interview-readiness report and drill list. Company-tailored versions auto-generate when an interview lands.</div></div>
+      <div class="card"><span class="t">Tier 3 · Real Application Simulation</span><span class="chip wait">generates on request</span>
+        <div class="m">The full experience of one real vacancy under time pressure: knockout questions, a motivation answer written by you, a timed mini-assessment in the domain, then the recruiter phone-screen questions.</div></div>
+      <div class="q" data-nosave><div class="ql">Request a test (any tier, or something new for sharper calibration)</div>
+        <textarea id="testreq" placeholder="e.g. generate the Gauntlet, focus on decomposition questions; or: a pandas-only drill"></textarea>
+        <div style="margin-top:8px"><button class="btn primary" id="dltest">&#10003; Request test</button> <span class="sc">the next run builds it and links it here</span></div></div>
+    </section>
+
+    <section class="panel" id="p-projects">
+      <h1>Projects</h1>
+      <div class="note"><div class="cardhead"><span class="cid">Forge</span>The monthly project engine</div>
+        <div class="kv"><b>Radar</b><span>Every run logs the day's dominating requirements to <span class="path">skills\forge-radar.md</span>, plus external signals: public labor stats, hiring voices, real posting trends.</span>
+        <b>First Friday</b><span>The radar becomes 2 or 3 project directions with honest effort estimates.</span>
+        <b>Together</b><span>Then a conversation, never an auto-pick: the run brings what the market wants, you bring what you want to build, and the project is defined together before anything is scaffolded.</span>
+        <b>Your words</b><span><b>hint</b> (a nudge, you write it) · <b>help</b> (smallest piece done and explained) · <b>nuclear</b> (one-shots the rest, honestly marked). Everything your hands write goes into PROVENANCE.md and raises your tiers.</span></div></div>
+      <div class="note">Demo projects below. On a real run these come from your GitHub and configured project folders (the weekly portfolio sync), each tagged with honest provenance.</div>
+      <div style="margin:12px 0 6px"><input type="text" id="psearch" placeholder="search by name..." style="max-width:280px;display:inline-block">
+        <span class="chips" id="pcats" style="display:inline-block;margin-left:8px"><button data-c="all" class="sel">all</button><button data-c="optimization">optimization</button><button data-c="ml">ML &amp; data</button><button data-c="ai">AI systems</button></span>
+        <button class="btn small" id="psort">sort: newest first</button></div>
+      <div id="pcards">
+        <div class="card pcard" data-name="demo routing optimizer" data-cat="optimization" data-date="2026-01"><span class="t">Demo Routing Optimizer</span><span class="chip clear">demo</span><div class="m">Example: a multi-depot routing solver, exact model plus a heuristic that matches the proven optimum · provenance: your idea, AI-built (demo)</div></div>
+        <div class="card pcard" data-name="demo risk model" data-cat="ml" data-date="2025-12"><span class="t">Demo Risk Model</span><span class="chip clear">demo</span><div class="m">Example: a calibrated prediction model feeding an exact optimizer, with a full test suite · provenance: AI-developed, presented as AI-direction skill (demo)</div></div>
+        <div class="card pcard" data-name="demo assistant pipeline" data-cat="ai" data-date="2026-01"><span class="t">Demo Assistant Pipeline</span><span class="chip wait">demo</span><div class="m">Example: an LLM extraction pipeline with a human confirmation gate · provenance: designed and directed by you, rule by rule (demo)</div></div>
+      </div>
+    </section>
+
+    <section class="panel" id="p-faith">
+      <h1>Values queue</h1>
+      <p class="sc">This panel appears only when the values module is on (SETUP.md). It holds employers your rubric could not clear or exclude outright, phrased as a 30-second question for whoever you escalate to. Define your floor in <span class="path">research\HALAL-RUBRIC-TEMPLATE.md</span>; answers get cached in <span class="path">memory\shaykh-rulings.md</span>. One fictional example below.</p>
+      <div class="ask"><div class="cardhead"><span class="cid">Q1</span>Consultancies whose clients include interest-core banks <span class="sc">(FICTIONAL EXAMPLE)</span></div>
+        <div class="kv"><b>Situation</b><span>The firm builds software and advises many clients, some of them conventional banks.</span>
+        <b>My work</b><span>Data and optimization on non-bank projects, but the employer can re-staff me.</span>
+        <b>Question</b><span>Is employment there permitted while my own projects stay clear? Does it change if I can decline bank-client assignments in writing?</span></div></div>
+      <h2>Cached rulings in force</h2>
+      <div class="rule"><div class="cardhead"><span class="cid">SR-001</span>Aggregate-logistics case <span class="sc">· FICTIONAL EXAMPLE</span></div>
+        <div class="kv"><b>Ruling</b><span>Planning logistics where some shipments may contain an excluded product is permitted when the planner cannot know and cannot check which shipments contain it.</span>
+        <b>Boundary</b><span>Knowledge is the hinge: identifiable excluded lines in your own work make it impermissible; genuine blindness within a permitted-core employer does not.</span></div></div>
+    </section>
+
+    <section class="panel" id="p-tips">
+      <h1>Tips</h1>
+      <div class="note">Demo tips. Each real tip offers three replies (accept and done, accept and park, decline); your choice commits and the run acts on it.</div>
+      <div class="tip"><div class="cardhead"><span class="cid">T-001</span>Switch on free job alerts</div>
+        <div class="kv"><b>What</b><span>Set up free alerts on your two favorite boards so fresh postings arrive between runs.</span>
+        <b>Why</b><span>Rolling posts reward early applicants; alerts shrink the gap.</span>
+        <b>Reply</b><span>accept and done · accept and park · decline</span></div></div>
+      <div class="tip"><div class="cardhead"><span class="cid">T-002</span>Fill the empty spots on your LinkedIn</div>
+        <div class="kv"><b>What</b><span>Add an About section, a banner, and featured links to your best public work.</span>
+        <b>Why</b><span>Complete profiles rank higher in recruiter search and get more replies.</span>
+        <b>Reply</b><span>accept and done · accept and park · decline</span></div></div>
+      <p class="sc"><b>Parking lot:</b> (empty in the demo).</p>
+    </section>
+
+    <section class="panel" id="p-about">
+      <h1>How your machine works</h1>
+      <div class="flow">
+        <div class="fstep you"><b>You:</b> say <code>Go</code> in the Job Hunter Claude session (any day, any model)</div>
+        <div class="farrow">&#8595;</div>
+        <div class="fstep"><b>It reads your words first.</b> Corrections, journal commits, preferences, values answers: everything you saved in this app or wrote in <span class="path">inputs\</span></div>
+        <div class="farrow">&#8595;</div>
+        <div class="fstep"><b>Hunts.</b> Fresh vacancies from the mapped sources, filtered by YOUR preferences, deduped against memory</div>
+        <div class="farrow">&#8595;</div>
+        <div class="fstep gate"><b>Filters, hard.</b> The values floor and your rulings first (if the module is on), then language, hours, commute, the traineeship cap</div>
+        <div class="farrow">&#8595;</div>
+        <div class="fstep"><b>Packages the best.</b> Tailored CV and letter (every line traced to documented evidence), an interactive page, a 3-minute quick-verify</div>
+        <div class="farrow">&#8595;</div>
+        <div class="fstep gate"><b>Two blocking auditors.</b> Honesty (no claim without proof) and values (no doubt packaged) can each kill any package</div>
+        <div class="farrow">&#8595;</div>
+        <div class="fstep you"><b>You press every send button.</b> The machine never submits, never emails, never posts. Ever.</div>
+        <div class="farrow">&#8595; &#8593;</div>
+        <div class="fsplit">
+          <div class="fstep"><b>Your feedback loops back.</b> Every commit becomes a numbered rule; every rejection a short hypothesis; acceptance rate is tracked honestly</div>
+          <div class="fstep"><b>It grows sideways.</b> Weekly portfolio sync (GitHub + your folders) · monthly Project Forge (first Friday, defined together) · skills radar every run</div>
+        </div>
+      </div>
+      <p class="sc">Everything is files you can read: <span class="path">CLAUDE.md</span> (the law) · <span class="path">memory\</span> (what it remembers) · <span class="path">briefs\</span> (what it did) · <span class="path">FAILURE-MODES.md</span> (what could go wrong and who catches it) · <a href="GUIDE.html">GUIDE</a> · <a href="SETUP.md">SETUP</a></p>
+    </section>
+
+  </div>
+
+  <div class="rail">
+    <h3>Deadlines</h3>
+    <div class="item"><b>Borealis Logistics</b><br><span class="cd" data-deadline="2026-01-15"></span></div>
+    <div class="item"><b>Cobalt Health Analytics</b><br><span class="cd ok" data-posted="2026-01-02"></span> (rolling)</div>
+    <div class="item"><b>Meridian Semiconductors</b><br><span class="cd ok" data-posted="2025-12-20"></span> (rolling)</div>
+    <h3>Quick actions</h3>
+    <div class="item"><a href="Job Hunter Skill Check.html">Skill Check</a></div>
+    <div class="item"><a href="GUIDE.html">Guide</a></div>
+    <div class="item"><a href="SETUP.md">Setup</a></div>
+    <h3>Honest numbers</h3>
+    <div class="item">3 prepared · 0 submitted<br><span class="sc">demo data; the second number is yours to move</span></div>
+  </div>
+
+</div>
+<div id="toast">Saved</div>
+
+<script>
+(function(){
+  /* panels */
+  var btns=[].slice.call(document.querySelectorAll('.nav button'));
+  function show(p){
+    [].slice.call(document.querySelectorAll('.panel')).forEach(function(s){s.classList.toggle('on',s.id==='p-'+p);});
+    btns.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-p')===p);});
+    try{localStorage.setItem('jh_dash_panel',p);}catch(e){}
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-p'));});});
+  try{var last=localStorage.getItem('jh_dash_panel');if(last&&document.getElementById('p-'+last))show(last);}catch(e){}
+
+  /* countdowns */
+  var MS=86400000;var today=new Date();today.setHours(0,0,0,0);
+  [].slice.call(document.querySelectorAll('.cd')).forEach(function(el){
+    var d=el.getAttribute('data-deadline'),p=el.getAttribute('data-posted');
+    if(d){var n=Math.round((new Date(d+'T00:00:00')-today)/MS);el.textContent=n<0?'CLOSED '+(-n)+' days ago':(n===0?'CLOSES TODAY':'closes in '+n+' day'+(n===1?'':'s'));if(n>3)el.classList.add('ok');if(n<0){var pc=el.closest('.appcard');if(pc){pc.classList.add('expired');var chip=pc.querySelector('.chip.wait');if(chip){chip.textContent='expired';}}}}
+    else if(p){var a=Math.round((today-new Date(p+'T00:00:00'))/MS);el.textContent='posted '+a+' day'+(a===1?'':'s')+' ago';}
+  });
+
+  function toast(m,warn){var t=document.getElementById('toast');t.textContent=m;t.style.borderColor=warn?'#f5c46f':'';t.style.color=warn?'#f5c46f':'';t.style.background=warn?'#33260f':'';t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3200);}
+  function dl(name,text){var b=new Blob([text],{type:'text/markdown'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();}
+  function commit(name,text){
+    fetch('http://127.0.0.1:7345/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,content:text})})
+    .then(function(r){return r.json();}).then(function(j){
+      if(j.ok){toast('Committed straight into the app. Done.');}
+      else{dl(name,text);toast('Saver refused it: downloaded instead, swept next run.',true);}
+    }).catch(function(){dl(name,text);toast('Saver offline: downloaded instead, swept next run.',true);});
+  }
+  /* saver status dot */
+  fetch('http://127.0.0.1:7345/ping').then(function(r){return r.json();}).then(function(){
+    document.getElementById('saverdot').classList.add('on');document.getElementById('savertxt').textContent='saver: on, commits go straight to disk';
+  }).catch(function(){document.getElementById('savertxt').textContent='saver: off (downloads + sweep instead)';});
+
+  /* applications: accept or reject, expiry, sorting */
+  function accState(id){try{return localStorage.getItem('jh_acc_'+id);}catch(e){return null;}}
+  try{if(accState('demo_borealis_or-analyst-intern')===null)localStorage.setItem('jh_acc_demo_borealis_or-analyst-intern','accepted');}catch(e){}
+  [].slice.call(document.querySelectorAll('.appcard')).forEach(function(card){
+    var id=card.getAttribute('data-app');
+    var dbtns=[].slice.call(card.querySelectorAll('.dec button'));
+    function paint(){var st=accState(id);dbtns.forEach(function(b){b.classList.toggle('sel',b.getAttribute('data-v')===st);});card.classList.toggle('rejected',st==='rejected');}
+    paint();
+    dbtns.forEach(function(b){b.addEventListener('click',function(){
+      var v=b.getAttribute('data-v');var cur=accState(id);
+      if(cur===v){try{localStorage.removeItem('jh_acc_'+id);}catch(e){}paint();buildJournal();return;}
+      try{localStorage.setItem('jh_acc_'+id,v);}catch(e){}
+      var note='';
+      if(v==='rejected'){note=window.prompt('One line: why reject? (optional, it teaches the machine)')||'';}
+      commit('journey-update.md','# Journey update (from dashboard)\n\nDate: '+new Date().toISOString().slice(0,10)+'\n\n- '+id+' | '+(v==='accepted'?'accepted-suggestion':'rejected-suggestion')+' | '+note+'\n');
+      paint();buildJournal();
+    });});
+  });
+  var acardsWrap=document.getElementById('acards');
+  var DIRS={date:-1,chance:-1,dist:1,pay:-1,deal:-1};
+  [].slice.call(document.querySelectorAll('#asort button')).forEach(function(b){
+    b.addEventListener('click',function(){
+      [].slice.call(document.querySelectorAll('#asort button')).forEach(function(o){o.classList.remove('sel');});b.classList.add('sel');
+      var k=b.getAttribute('data-s');var dir=DIRS[k];
+      [].slice.call(acardsWrap.querySelectorAll('.appcard')).sort(function(a,c){
+        var x=k==='date'?a.getAttribute('data-date'):parseFloat(a.getAttribute('data-'+k));
+        var y=k==='date'?c.getAttribute('data-date'):parseFloat(c.getAttribute('data-'+k));
+        return (x<y?-1:x>y?1:0)*dir;
+      }).forEach(function(c){acardsWrap.appendChild(c);});
+    });
+  });
+
+  /* journal: accepted applications only, with a movement log per row */
+  var APPS=[
+    ['demo_borealis_or-analyst-intern','Borealis Logistics OR Analyst intern'],
+    ['demo_cobalt_data-scientist-werkstudent','Cobalt Health Analytics data scientist'],
+    ['demo_meridian_bi-analyst-intern','Meridian Semiconductors BI analyst intern']
+  ];
+  var STAGES=['submitted','acknowledged','online-assessment','recruiter-call','interview','offer','rejected','ghosted','withdrawn'];
+  var wrap=document.getElementById('jrows');
+  function jlog(id){try{return JSON.parse(localStorage.getItem('jh_jlog_'+id)||'[]');}catch(e){return [];}}
+  function buildJournal(){
+    wrap.innerHTML='';var shown=0;
+    APPS.forEach(function(app){
+      if(accState(app[0])!=='accepted')return;shown++;
+      var div=document.createElement('div');div.className='q';div.setAttribute('data-app',app[0]);
+      var html='<div class="ql"><b>'+app[1]+'</b></div><div class="chips">';
+      STAGES.forEach(function(s){html+='<button data-v="'+s+'">'+s+'</button>';});
+      html+='</div><textarea placeholder="note: who, when, what they said (optional)"></textarea>';
+      var logs=jlog(app[0]);
+      if(logs.length){html+='<div class="jlog">your movements: '+logs.map(function(l){return '<span>'+l.d+' '+l.s+'</span>'+(l.n?' ('+l.n+')':'');}).join(' &#8594; ')+'</div>';}
+      div.innerHTML=html;wrap.appendChild(div);
+      var chips=[].slice.call(div.querySelectorAll('.chips button'));
+      var key='jh_j_'+app[0];
+      try{var st=localStorage.getItem(key+'_s');if(st)chips.forEach(function(b){b.classList.toggle('sel',b.getAttribute('data-v')===st);});
+          var nt=localStorage.getItem(key+'_n');if(nt)div.querySelector('textarea').value=nt;}catch(e){}
+      chips.forEach(function(b){b.addEventListener('click',function(){
+        var was=b.classList.contains('sel');chips.forEach(function(o){o.classList.remove('sel');});
+        if(!was){b.classList.add('sel');try{localStorage.setItem(key+'_s',b.getAttribute('data-v'));}catch(e){}}
+        else{try{localStorage.removeItem(key+'_s');}catch(e){}}
+      });});
+      div.querySelector('textarea').addEventListener('input',function(){try{localStorage.setItem(key+'_n',this.value);}catch(e){}});
+    });
+    if(!shown){wrap.innerHTML='<div class="card"><span class="sc">No accepted applications yet. Accept a suggestion in the Applications panel and it appears here for stage tracking.</span></div>';}
+  }
+  buildJournal();
+  document.getElementById('dljournal').addEventListener('click',function(){
+    var d=new Date().toISOString().slice(0,10);
+    var dt=new Date().toISOString().slice(0,16).replace('T',' ');
+    var out='# Journey update (from dashboard)\n\nDate: '+dt+'\n\n';var n=0;var touched=[];
+    [].slice.call(wrap.querySelectorAll('.q')).forEach(function(div){
+      var id=div.getAttribute('data-app');var sel=div.querySelector('.chips button.sel');
+      var note=div.querySelector('textarea').value.trim();
+      if(sel||note){n++;out+='- '+id+' | '+(sel?sel.getAttribute('data-v'):'(note only)')+' | '+(note||'')+'\n';
+        touched.push({id:id,s:sel?sel.getAttribute('data-v'):'note',n:note});}
+    });
+    if(!n){toast('Nothing touched: pick a stage or write a note first.',true);return;}
+    commit('journey-update.md',out);
+    touched.forEach(function(t){
+      var logs=jlog(t.id);logs.push({d:d,s:t.s,n:t.n});
+      try{localStorage.setItem('jh_jlog_'+t.id,JSON.stringify(logs));
+          localStorage.removeItem('jh_j_'+t.id+'_s');localStorage.removeItem('jh_j_'+t.id+'_n');}catch(e){}
+    });
+    buildJournal();
+  });
+
+  /* preferences */
+  var pq=[].slice.call(document.querySelectorAll('#p-prefs .q'));
+  pq.forEach(function(q){
+    var key='jh_p_'+q.getAttribute('data-key');
+    var chips=[].slice.call(q.querySelectorAll('.chips button'));
+    var oth=q.querySelector('input.oth');
+    var ta=q.querySelector('textarea');
+    if(chips.length){try{var st=localStorage.getItem(key);if(st)chips.forEach(function(b){b.classList.toggle('sel',b.getAttribute('data-v')===st);});}catch(e){}
+      chips.forEach(function(b){b.addEventListener('click',function(){chips.forEach(function(o){o.classList.remove('sel');});b.classList.add('sel');if(oth)oth.value='';try{localStorage.setItem(key,b.getAttribute('data-v'));localStorage.removeItem(key+'_o');}catch(e){}});});}
+    if(oth){try{var ov=localStorage.getItem(key+'_o');if(ov)oth.value=ov;}catch(e){}
+      oth.addEventListener('input',function(){if(oth.value.trim())chips.forEach(function(o){o.classList.remove('sel');});try{localStorage.setItem(key+'_o',oth.value);}catch(e){}});}
+    if(ta){try{var v=localStorage.getItem(key);if(v)ta.value=v;}catch(e){}
+      ta.addEventListener('input',function(){try{localStorage.setItem(key,ta.value);}catch(e){}});}
+  });
+  document.getElementById('dlprefs').addEventListener('click',function(){
+    var out='# Search preferences (standing orders; the run reads this BEFORE every hunt)\n\nSaved from the dashboard '+new Date().toISOString().slice(0,10)+'. Newest statements win; the values floor, honesty rules and prepare-only are never overridable.\n\n';
+    pq.forEach(function(q){
+      var label=q.getAttribute('data-label');var sel=q.querySelector('.chips button.sel');
+      var oth=q.querySelector('input.oth');var ta=q.querySelector('textarea');
+      var val=(oth&&oth.value.trim())?('other: '+oth.value.trim()):(sel?sel.getAttribute('data-v'):(ta&&ta.value.trim()?ta.value.trim():null));
+      out+='- '+label+': '+(val||'(unchanged, keep the standing default)')+'\n';
+    });
+    commit('search-preferences.md',out);
+  });
+
+  /* test request */
+  document.getElementById('dltest').addEventListener('click',function(){
+    var v=document.getElementById('testreq').value.trim();
+    if(!v){toast('Write one line about the test you want first.',true);return;}
+    commit('test-request.md','# Test request (from dashboard)\n\nDate: '+new Date().toISOString().slice(0,10)+'\n\n'+v+'\n');
+  });
+
+  /* projects search + filter + sort */
+  var cards=[].slice.call(document.querySelectorAll('.pcard'));
+  var cat='all', qtxt='', desc=true;
+  function apply(){
+    cards.forEach(function(c){
+      var okC=(cat==='all'||c.getAttribute('data-cat')===cat);
+      var okQ=(!qtxt||c.getAttribute('data-name').indexOf(qtxt)!==-1);
+      c.style.display=(okC&&okQ)?'':'none';
+    });
+    var parent=document.getElementById('pcards');
+    cards.slice().sort(function(a,b){var x=a.getAttribute('data-date'),y=b.getAttribute('data-date');return desc?(x<y?1:-1):(x>y?1:-1);}).forEach(function(c){parent.appendChild(c);});
+  }
+  document.getElementById('psearch').addEventListener('input',function(){qtxt=this.value.trim().toLowerCase();apply();});
+  [].slice.call(document.querySelectorAll('#pcats button')).forEach(function(b){
+    b.addEventListener('click',function(){[].slice.call(document.querySelectorAll('#pcats button')).forEach(function(o){o.classList.remove('sel');});b.classList.add('sel');cat=b.getAttribute('data-c');apply();});
+  });
+  document.getElementById('psort').addEventListener('click',function(){desc=!desc;this.textContent=desc?'sort: newest first':'sort: oldest first';apply();});
+  apply();
+})();
+</script>
+<script>
+(function(){var n=0;var b=document.getElementById('brandlogo');if(!b)return;
+console.log('%c\u2b21 you found the console. now try clicking the logo seven times.','color:#b06bff');
+b.addEventListener('click',function(){n++;if(n===7){n=0;
+var t=document.createElement('div');t.style.cssText='position:fixed;inset:0;background:rgba(4,6,10,.92);z-index:99;display:flex;align-items:center;justify-content:center;padding:30px';
+t.innerHTML='<div style="max-width:520px;background:#0a0f1a;border:1px solid #b06bff;border-radius:16px;padding:26px 30px;font-size:15px;line-height:1.7"><div style="font-size:20px;font-weight:700;background:linear-gradient(90deg,#4a8fff,#b06bff,#e068ff);-webkit-background-clip:text;background-clip:text;color:transparent">The Hunter&#39;s Creed</div><p>Verify before you trust.<br>Commit before you forget.<br>Let the machine hunt, filter and write,<br>but never let it press send.<br><br>Rejection is data. Honesty is leverage.<br>And the second number on the overview<br>only ever moves by a human hand.</p><p style="color:#8494ac;font-size:12.5px">left here on purpose &middot; v2.0 &middot; click anywhere to close</p></div>';
+t.addEventListener('click',function(){t.remove();});document.body.appendChild(t);}});})();
+</script>
+</body>
+</html>

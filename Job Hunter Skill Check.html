@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Hunter · Skill Check</title>
+<link rel="icon" href="runner/job-hunter.ico">
+<style>
+  :root{color-scheme:dark;
+    --canvas:#04060a; --card:#0a0f1a; --border:#1c2740;
+    --ink:#dbe4f0; --dim:#8494ac;
+    --green:#7cd99e; --amber:#f5c46f; --purple:#b06bff; --codeink:#8fd0ff; --codebg:#10182a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.55}
+  .wrap{max-width:880px;margin:0 auto;padding:34px 22px 120px}
+  .kicker{letter-spacing:.25em;font-size:12px;color:var(--dim);text-transform:uppercase}
+  h1{margin:6px 0 4px;font-size:34px;font-weight:700;background:linear-gradient(90deg,#4a8fff,#b06bff,#e068ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--dim);margin:0 0 18px}
+  .note{border:1px solid rgba(176,107,255,.35);background:rgba(176,107,255,.07);border-left:4px solid var(--purple);border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15px}
+  section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin:22px 0}
+  h2{margin:0 0 4px;font-size:20px}
+  h2 .t{color:var(--dim);font-size:13px;font-weight:400;margin-left:8px}
+  .secsub{color:var(--dim);font-size:14px;margin:0 0 14px}
+  .q{padding:13px 0;border-top:1px solid #121a2c}
+  .q:first-of-type{border-top:none}
+  .ql{font-size:15.5px;margin-bottom:8px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#0e1626;border:1px solid var(--border);color:var(--ink);border-radius:999px;padding:8px 16px;font-size:14.5px;cursor:pointer;font-family:inherit}
+  .chip:hover{border-color:#3a4d78}
+  .chip.sel{background:rgba(124,217,158,.14);border-color:var(--green);color:var(--green);font-weight:600}
+  input[type=text],textarea{width:100%;background:var(--codebg);border:1px solid var(--border);border-radius:8px;color:var(--codeink);font-family:Consolas,monospace;font-size:14px;padding:9px 12px;outline:none}
+  textarea{min-height:70px;resize:vertical}
+  code{background:var(--codebg);color:var(--codeink);font-family:Consolas,monospace;padding:2px 7px;border-radius:6px;font-size:13.5px}
+  pre{background:var(--codebg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--codeink);font-family:Consolas,monospace;font-size:13.5px;overflow-x:auto}
+  .bar{position:fixed;left:0;right:0;bottom:0;background:rgba(6,10,18,.96);border-top:1px solid var(--border);backdrop-filter:blur(6px);padding:12px 22px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .btn{border:none;border-radius:10px;padding:12px 22px;font-size:15.5px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn.primary{background:linear-gradient(90deg,#2f6fe0,#8a4fd8);color:#fff}
+  .btn.ghost{background:#0e1626;color:var(--ink);border:1px solid var(--border)}
+  #progress{color:var(--dim);font-size:14px}
+  #toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#12331f;color:var(--green);border:1px solid var(--green);border-radius:10px;padding:10px 18px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .25s}
+  #toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="dashboard.html" style="display:inline-block;background:#0e1626;border:1px solid #1c2740;border-radius:10px;padding:9px 16px;color:#dbe4f0;text-decoration:none;font-size:14.5px;margin-bottom:14px">&#8592; back to Job Hunter</a>
+  <div class="kicker">Job Hunter · Skill check · calibration, not an exam</div>
+  <h1>&#9650; Skill Check</h1>
+  <p class="sub">This is how Job Hunter learns what your hands can actually do right now, so your CV never overshoots and never undersells. Nobody grades you; being rusty is expected and useful data.</p>
+
+  <div class="note"><b>How it works:</b> four modules (Python, SQL, R, Optimization and Statistics), 10 to 12 minutes each. Do them in any order, skip any module entirely if you want (a skipped module just keeps its skill at the documented-evidence level). Answer WITHOUT running code or searching; "I don't know" as an answer is genuinely fine and calibrates better than a guess. Everything saves in this browser as you go. At the end just click Commit: the saver writes it straight into the app (moving the file to <code>inputs/skill-test-results.md</code> also works and is picked up instantly).</div>
+
+  <!-- PYTHON -->
+  <section>
+    <h2>Module 1 · Python<span class="t">10 to 12 min</span></h2>
+    <div class="q" data-key="p1" data-label="PY warmup: list comprehension" data-kind="mc" data-correct="[0, 2, 4, 6]">
+      <div class="ql">1. What does <code>[x*2 for x in range(4)]</code> produce?</div>
+      <div class="chips"><button class="chip" data-v="[0, 2, 4, 6]">[0, 2, 4, 6]</button><button class="chip" data-v="[2, 4, 6, 8]">[2, 4, 6, 8]</button><button class="chip" data-v="[0, 2, 4, 6, 8]">[0, 2, 4, 6, 8]</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="p2" data-label="PY warmup: data structures" data-kind="mc" data-correct="A dictionary of lists">
+      <div class="ql">2. What is <code>{"a": [1,2], "b": [3]}</code>?</div>
+      <div class="chips"><button class="chip" data-v="A dictionary of lists">A dictionary of lists</button><button class="chip" data-v="A list of dictionaries">A list of dictionaries</button><button class="chip" data-v="A set of tuples">A set of tuples</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="p3" data-label="PY read: function behavior" data-kind="mc" data-correct="9">
+      <div class="ql">3. What does this return?</div>
+      <pre>def f(xs, start=0):
+    total = start
+    for x in xs:
+        if x % 2 == 1:
+            total += x
+    return total
+
+f([1, 2, 3, 4, 5])</pre>
+      <div class="chips"><button class="chip" data-v="9">9</button><button class="chip" data-v="15">15</button><button class="chip" data-v="6">6</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="p4" data-label="PY read: pandas groupby" data-kind="mc" data-correct="The average price per city">
+      <div class="ql">4. Conceptually, what does <code>df.groupby("city")["price"].mean()</code> give you?</div>
+      <div class="chips"><button class="chip" data-v="The average price per city">The average price per city</button><button class="chip" data-v="The average city per price">The average city per price</button><button class="chip" data-v="One overall average price">One overall average price</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="p5" data-label="PY predict: set" data-kind="text-predict" data-correct="3">
+      <div class="ql">5. What prints? <code>print(len(set([1, 2, 2, 3])))</code></div>
+      <input type="text" placeholder="type the output, or: I don't know">
+    </div>
+    <div class="q" data-key="p6" data-label="PY predict: slicing" data-kind="text-predict" data-correct="rati">
+      <div class="ql">6. What prints? <code>print("operations"[3:7])</code></div>
+      <input type="text" placeholder="type the output, or: I don't know">
+    </div>
+    <div class="q" data-key="p7" data-label="PY write: max without max()" data-kind="write">
+      <div class="ql">7. Write a function that returns the largest number in a list, without using <code>max()</code>. Rough syntax is fine; the logic is what counts.</div>
+      <textarea placeholder="def largest(xs): ..."></textarea>
+    </div>
+    <div class="q" data-key="p8" data-label="PY self-report" data-kind="self">
+      <div class="ql">8. Honest self-check: your Python right now.</div>
+      <div class="chips"><button class="chip" data-v="gone">mostly gone</button><button class="chip" data-v="day-refresh">comes back with a day of refresh</button><button class="chip" data-v="with-docs">can work with docs open</button><button class="chip" data-v="comfortable">comfortable</button></div>
+    </div>
+  </section>
+
+  <!-- SQL -->
+  <section>
+    <h2>Module 2 · SQL<span class="t">10 min</span></h2>
+    <div class="q" data-key="s1" data-label="SQL warmup: filtering" data-kind="mc" data-correct="WHERE">
+      <div class="ql">1. Which clause filters individual rows before any grouping?</div>
+      <div class="chips"><button class="chip" data-v="WHERE">WHERE</button><button class="chip" data-v="HAVING">HAVING</button><button class="chip" data-v="ORDER BY">ORDER BY</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="s2" data-label="SQL warmup: LEFT JOIN" data-kind="mc" data-correct="All rows from the left table, with NULLs where the right table has no match">
+      <div class="ql">2. What does a LEFT JOIN keep?</div>
+      <div class="chips"><button class="chip" data-v="All rows from the left table, with NULLs where the right table has no match">All left rows, NULLs where right has no match</button><button class="chip" data-v="Only rows that match in both tables">Only rows matching in both</button><button class="chip" data-v="All rows from both tables always">All rows from both tables always</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="s3" data-label="SQL read: GROUP BY + HAVING" data-kind="mc" data-correct="Cities that have more than 10 orders, with their order counts">
+      <div class="ql">3. What does this return?</div>
+      <pre>SELECT city, COUNT(*) AS n
+FROM orders
+GROUP BY city
+HAVING COUNT(*) > 10;</pre>
+      <div class="chips"><button class="chip" data-v="Cities that have more than 10 orders, with their order counts">Cities with more than 10 orders, and their counts</button><button class="chip" data-v="The first 10 cities by order count">The first 10 cities by order count</button><button class="chip" data-v="All orders from cities named in the top 10">All orders from top-10 cities</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="s4" data-label="SQL read: aggregation rule" data-kind="mc" data-correct="city is not aggregated and not in a GROUP BY">
+      <div class="ql">4. Why does <code>SELECT city, COUNT(*) FROM orders;</code> fail (or misbehave) in most databases?</div>
+      <div class="chips"><button class="chip" data-v="city is not aggregated and not in a GROUP BY">city is neither aggregated nor grouped</button><button class="chip" data-v="COUNT needs a column name, never *">COUNT can never take *</button><button class="chip" data-v="It is missing a WHERE clause">A WHERE clause is required</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="s5" data-label="SQL predict: join count" data-kind="text-predict" data-correct="2">
+      <div class="ql">5. Table A has customer ids (1, 2, 3). Table B has orders with customer ids (2, 2, 5). How many rows does <code>A INNER JOIN B ON A.id = B.customer_id</code> return?</div>
+      <input type="text" placeholder="a number, or: I don't know">
+    </div>
+    <div class="q" data-key="s6" data-label="SQL predict: distinct count" data-kind="text-predict" data-correct="2">
+      <div class="ql">6. Same table B (customer ids 2, 2, 5): what does <code>SELECT COUNT(DISTINCT customer_id) FROM B;</code> return?</div>
+      <input type="text" placeholder="a number, or: I don't know">
+    </div>
+    <div class="q" data-key="s7" data-label="SQL write: totals per customer" data-kind="write">
+      <div class="ql">7. Table <code>orders(id, customer_id, amount, created_at)</code>. Write a query: total amount per customer for orders in 2026, biggest total first. Rough syntax fine.</div>
+      <textarea placeholder="SELECT ..."></textarea>
+    </div>
+    <div class="q" data-key="s8" data-label="SQL self-report" data-kind="self">
+      <div class="ql">8. Honest self-check: your SQL right now.</div>
+      <div class="chips"><button class="chip" data-v="gone">mostly gone</button><button class="chip" data-v="day-refresh">comes back with a day of refresh</button><button class="chip" data-v="with-docs">can work with docs open</button><button class="chip" data-v="comfortable">comfortable</button></div>
+    </div>
+  </section>
+
+  <!-- R -->
+  <section>
+    <h2>Module 3 · R<span class="t">8 to 10 min, skip freely if R was never yours</span></h2>
+    <div class="q" data-key="r1" data-label="R warmup: data.frame" data-kind="mc" data-correct="A table of rows and columns, like a spreadsheet or a pandas DataFrame">
+      <div class="ql">1. What is a <code>data.frame</code> in R closest to?</div>
+      <div class="chips"><button class="chip" data-v="A table of rows and columns, like a spreadsheet or a pandas DataFrame">A table, like a spreadsheet / pandas DataFrame</button><button class="chip" data-v="A single column of numbers">A single column of numbers</button><button class="chip" data-v="A folder of csv files">A folder of csv files</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="r2" data-label="R warmup: assignment" data-kind="mc" data-correct="x <- 5">
+      <div class="ql">2. The classic way to assign the value 5 to x in R?</div>
+      <div class="chips"><button class="chip" data-v="x <- 5">x &lt;- 5</button><button class="chip" data-v="x := 5">x := 5</button><button class="chip" data-v="let x = 5">let x = 5</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="r3" data-label="R read: NA handling" data-kind="mc" data-correct="NA, and mean(x, na.rm = TRUE) fixes it">
+      <div class="ql">3. What does <code>mean(c(1, 2, NA))</code> return, and what is the fix?</div>
+      <div class="chips"><button class="chip" data-v="NA, and mean(x, na.rm = TRUE) fixes it">NA; fix with na.rm = TRUE</button><button class="chip" data-v="1.5, NA is skipped automatically">1.5; NA is skipped automatically</button><button class="chip" data-v="An error that crashes the script">An error, always</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="r4" data-label="R read: lm" data-kind="mc" data-correct="Fits a linear regression of y on x">
+      <div class="ql">4. What does <code>lm(y ~ x, data = df)</code> do?</div>
+      <div class="chips"><button class="chip" data-v="Fits a linear regression of y on x">Fits a linear regression of y on x</button><button class="chip" data-v="Tests whether y and x are independent">Runs an independence test</button><button class="chip" data-v="Plots y against x">Plots y against x</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="r5" data-label="R predict: length" data-kind="text-predict" data-correct="5">
+      <div class="ql">5. What does <code>length(c(1:5))</code> return?</div>
+      <input type="text" placeholder="a number, or: I don't know">
+    </div>
+    <div class="q" data-key="r6" data-label="R predict: paste" data-kind="text-predict" data-correct="a-b">
+      <div class="ql">6. What does <code>paste("a", "b", sep = "-")</code> return?</div>
+      <input type="text" placeholder="the string, or: I don't know">
+    </div>
+    <div class="q" data-key="r7" data-label="R write: load and summarize" data-kind="write">
+      <div class="ql">7. Write the R lines to load <code>data.csv</code> and show summary statistics of it. Rough is fine.</div>
+      <textarea placeholder="..."></textarea>
+    </div>
+    <div class="q" data-key="r8" data-label="R self-report" data-kind="self">
+      <div class="ql">8. Honest self-check: your R right now.</div>
+      <div class="chips"><button class="chip" data-v="never-had-it">never really had it</button><button class="chip" data-v="gone">mostly gone</button><button class="chip" data-v="day-refresh">comes back with a day of refresh</button><button class="chip" data-v="with-docs">can work with docs open</button></div>
+    </div>
+  </section>
+
+  <!-- OPTIMIZATION AND STATISTICS -->
+  <section>
+    <h2>Module 4 · Optimization and Statistics<span class="t">12 min, your home turf</span></h2>
+    <div class="q" data-key="m1" data-label="OPT warmup: linearity" data-kind="mc" data-correct="Objective and constraints are all linear functions of the decision variables">
+      <div class="ql">1. What makes a linear program linear?</div>
+      <div class="chips"><button class="chip" data-v="Objective and constraints are all linear functions of the decision variables">Objective and constraints are linear in the decision variables</button><button class="chip" data-v="It can be solved in linear time">It solves in linear time</button><button class="chip" data-v="The variables must be integers">Variables must be integers</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="m2" data-label="OPT warmup: binding constraint" data-kind="mc" data-correct="A constraint that holds with equality at the optimum">
+      <div class="ql">2. A binding constraint at the optimum is one that...</div>
+      <div class="chips"><button class="chip" data-v="A constraint that holds with equality at the optimum">holds with equality there</button><button class="chip" data-v="A constraint that can be removed without changing anything">can be removed freely</button><button class="chip" data-v="A constraint that makes the problem infeasible">makes the problem infeasible</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="m3" data-label="OPT solve: tiny LP" data-kind="text-predict" data-correct="x=2, y=2, objective 10">
+      <div class="ql">3. Maximize <code>3x + 2y</code> subject to <code>x + y &le; 4</code>, <code>x &le; 2</code>, <code>x, y &ge; 0</code>. What is the optimal x, y, and objective value? (Think corner points.)</div>
+      <input type="text" placeholder="x=?, y=?, objective=?  or: I don't know">
+    </div>
+    <div class="q" data-key="m4" data-label="OPT read: shadow price" data-kind="mc" data-correct="How much the optimal objective improves per unit relaxation of that constraint">
+      <div class="ql">4. The shadow price (dual value) of a constraint tells you...</div>
+      <div class="chips"><button class="chip" data-v="How much the optimal objective improves per unit relaxation of that constraint">the objective gain per unit of extra capacity in that constraint</button><button class="chip" data-v="The cost of the most expensive variable">the cost of the priciest variable</button><button class="chip" data-v="How long the solver will run">solver runtime</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="m5" data-label="STAT read: p-value" data-kind="mc" data-correct="The probability of data at least this extreme, if the null hypothesis were true">
+      <div class="ql">5. A p-value of 0.03 means...</div>
+      <div class="chips"><button class="chip" data-v="The probability of data at least this extreme, if the null hypothesis were true">P(data at least this extreme | null true)</button><button class="chip" data-v="There is a 3 percent chance the null hypothesis is true">3 percent chance the null is true</button><button class="chip" data-v="The effect size is 0.03">the effect size is 0.03</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="m6" data-label="STAT predict: skew" data-kind="mc" data-correct="Mean above the median">
+      <div class="ql">6. Salaries are right-skewed. You expect the...</div>
+      <div class="chips"><button class="chip" data-v="Mean above the median">mean above the median</button><button class="chip" data-v="Median above the mean">median above the mean</button><button class="chip" data-v="Mean equal to the median">mean equal to the median</button><button class="chip" data-v="I don't know">I don't know</button></div>
+    </div>
+    <div class="q" data-key="m7" data-label="OPT write: tiny assignment model" data-kind="write">
+      <div class="ql">7. Three tasks, two workers, cost c[w][t] to give task t to worker w. Each task goes to exactly one worker. Minimize total cost. Write the decision variables, objective, and constraints (words plus rough math is fine).</div>
+      <textarea placeholder="variables: x[w][t] = ..."></textarea>
+    </div>
+    <div class="q" data-key="m8" data-label="OPT-STAT self-report" data-kind="self">
+      <div class="ql">8. Honest self-check: optimization and statistics right now.</div>
+      <div class="chips"><button class="chip" data-v="gone">mostly gone</button><button class="chip" data-v="day-refresh">comes back with a day of refresh</button><button class="chip" data-v="with-docs">can work with docs open</button><button class="chip" data-v="comfortable">comfortable</button></div>
+    </div>
+  </section>
+
+  <div class="note"><b>Done?</b> Click Commit below and you are done: the saver writes the result straight into the app (or, if it is offline, downloads it and the next run sweeps your Downloads folder). Multiple-choice and predictions are scored automatically; your written answers get graded by the pipeline with the same honesty rules as everything else, and your CV skill wording follows the LOWER of this result and your documented evidence.</div>
+</div>
+
+<div class="bar">
+  <span id="progress">0 of 32 answered</span>
+  <button class="btn primary" id="dl">&#10003; Commit results</button>
+  <button class="btn ghost" id="cp">&#128203; Copy results</button>
+</div>
+<div id="toast">Saved</div>
+
+<script>
+(function(){
+  var P='guide_jhsc_';
+  var qs=[].slice.call(document.querySelectorAll('.q'));
+  function save(k,v){ try{localStorage.setItem(P+k,v);}catch(e){} }
+  function load(k){ try{return localStorage.getItem(P+k);}catch(e){return null;} }
+  qs.forEach(function(q){
+    var key=q.getAttribute('data-key');
+    var chips=[].slice.call(q.querySelectorAll('.chip'));
+    var input=q.querySelector('input[type=text],textarea');
+    if(chips.length){
+      var st=load(key);
+      if(st!==null){ chips.forEach(function(c){ c.classList.toggle('sel', c.getAttribute('data-v')===st); }); }
+      chips.forEach(function(c){
+        c.addEventListener('click',function(){
+          chips.forEach(function(o){o.classList.remove('sel');});
+          c.classList.add('sel'); save(key,c.getAttribute('data-v')); bump();
+        });
+      });
+    }
+    if(input){
+      var sv=load(key); if(sv!==null)input.value=sv;
+      input.addEventListener('input',function(){ save(key,input.value); bump(); });
+    }
+  });
+  function answerOf(q){
+    var sel=q.querySelector('.chip.sel'); if(sel)return sel.getAttribute('data-v');
+    var input=q.querySelector('input[type=text],textarea');
+    if(input&&input.value.trim())return input.value.trim();
+    return null;
+  }
+  function bump(){
+    var n=qs.filter(function(q){return answerOf(q)!==null;}).length;
+    document.getElementById('progress').textContent=n+' of '+qs.length+' answered';
+  }
+  bump();
+  function norm(s){ return (s||'').toLowerCase().replace(/[\s"']+/g,''); }
+  function serialize(){
+    var d=new Date();
+    var out='# Job Hunter skill check results\n\nFilled '+d.toISOString().slice(0,16).replace('T',' ')+'. Auto-scoring covers multiple choice and predictions; written answers are graded by the pipeline. CV skill wording = the LOWER of this result and documented evidence.\n';
+    var mods={p:'Python',s:'SQL',r:'R',m:'Optimization and Statistics'};
+    Object.keys(mods).forEach(function(pre){
+      var mqs=qs.filter(function(q){return q.getAttribute('data-key').charAt(0)===pre;});
+      var scored=0, correct=0, answered=0;
+      out+='\n## '+mods[pre]+'\n';
+      mqs.forEach(function(q){
+        var a=answerOf(q); var kind=q.getAttribute('data-kind'); var label=q.getAttribute('data-label');
+        if(a!==null&&kind!=='self')answered++;
+        if(kind==='mc'||kind==='text-predict'){
+          scored++;
+          var ok=(a!==null)&&(kind==='mc'? a===q.getAttribute('data-correct') : norm(a)===norm(q.getAttribute('data-correct')) || norm(a).indexOf(norm(q.getAttribute('data-correct')))!==-1);
+          if(ok)correct++;
+          out+='- '+label+': '+(a===null?'(unanswered)':a)+' | auto: '+(a===null?'skip':(ok?'correct':'not matched, expected '+q.getAttribute('data-correct')))+'\n';
+        } else {
+          out+='- '+label+': '+(a===null?'(unanswered)':a.replace(/\n/g,'\n    '))+'\n';
+        }
+      });
+      out+='- MODULE AUTO-SCORE: '+correct+' of '+scored+' scorable, '+answered+' questions attempted\n';
+    });
+    return out;
+  }
+  function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2200); }
+  document.getElementById('dl').addEventListener('click',function(){var txt=serialize();fetch('http://127.0.0.1:7345/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'skill-test-results.md',content:txt})}).then(function(r){return r.json();}).then(function(j){if(j.ok){toast('Committed straight into the app. Done.');}else{throw 0;}}).catch(function(){var blob=new Blob([txt],{type:'text/markdown'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='skill-test-results.md';document.body.appendChild(a);a.click();a.remove();toast('Saver offline: downloaded instead, swept next run.');});});
+  document.getElementById('cp').addEventListener('click',function(){
+    var txt=serialize();
+    function fb(){ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');toast('Copied.');}catch(e){toast('Copy blocked, use Download.');} ta.remove(); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){toast('Copied.');},fb); } else fb();
+  });
+})();
+</script>
+</body>
+</html>

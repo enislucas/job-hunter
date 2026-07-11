@@ -1,0 +1,26 @@
+# ATS principles, verified
+
+Consolidated from five adversarial fact-check files in research\raw\ (ats-parsing.md, ats-keywords.md, ats-myths.md, ats-ai-2026.md, ats-nl-norms.md). Each claim there carries verdicts with 2+ cited URLs and dates, plus refutation attempts. This file is the summary layer; the raw files are the proof layer. The operative rubric lives in CV-RULES-TEMPLATE.md. (This document is generic and public-source-cited; it is safe to keep as-is. The raw proof files are not shipped in the public template; regenerate them with your own current sources if you want the full evidence trail.)
+
+## What survived verification (use with confidence)
+
+1. Single column, standard headings, real text only. A 2026 eight-system test still broke two-column layouts in 7 of 8 systems, dropped sidebars in 4, and missed header-zone contact info in 6 of 8. This is not an old-ATS problem. (ats-parsing.md, claims 1, 3, 4)
+2. Contact details go at the TOP of the document body. Bottom-of-body contact failed name extraction in 5 of 8 systems. Never the literal header or footer zone. (ats-parsing.md, claim 4)
+3. DOCX parses best (96.7 percent average), text-based PDF close behind (91.3), image or scanned PDF is dead (4.3). Send Word when the form asks for Word. (ats-parsing.md, claim 2)
+4. One A4 page is the junior norm in many European markets, two the hard max. Major Dutch university career services agree for the NL market. (ats-parsing.md, claim 5)
+5. ATS mostly rank, filter and enable recruiter keyword search; humans reject. The famous "75 percent auto-rejected by robots" traces to a defunct 2012 vendor with no data. 92 percent of surveyed recruiters review manually; only 8 percent hard-auto-reject on content. The real automated gates are knockout questions: work authorization, location, certifications, availability. (ats-myths.md, claims 1, 2)
+6. In the EU, solely automated rejection is legally constrained (GDPR art. 22), and the AI Act's high-risk hiring duties are NOT yet enforced as of mid 2026 (postponed toward Dec 2027 by the Digital Omnibus; the emotion-recognition ban HAS applied since Feb 2025). Do not rely on transparency rights; rely on a strong honest CV. (ats-ai-2026.md, claim 3)
+7. Keyword findability still matters: mirror the vacancy's exact hard-skill and tool phrasing when true; include acronym plus spelled-out form for clean acronyms (ML, SQL, NLP). Beware noisy two-letter tokens: a token like "OR" collides with the English word, so always lead with the spelled-out term ("Operations Research") and lean on concrete tool names (Gurobi, CPLEX, OR-Tools, CP-SAT, PuLP, linear programming). (ats-keywords.md, claims 2, 3)
+8. LLM-based semantic screening is growing but plain keyword parsing is still everywhere, so the safe CV does both: clear plain language AND honest keyword mirroring. Fabricated fluff is riskier than ever because verification and AI-fraud screening expanded. (ats-ai-2026.md, claim 1)
+9. Recruiter first pass is roughly 6 to 40 seconds, concentrated on the top of page one; short one-pagers often get read fully, so no weak filler anywhere. (ats-myths.md claim 3, ats-keywords.md claim 5)
+10. Quantified action-method-number bullets beat duty lists; many recruiters, and Dutch recruiters specifically, value sober numbers over flair. Exact multipliers in the literature are soft; the principle is unanimous. (ats-keywords.md, claim 6)
+11. Stuffing and hidden text are detectable, read as cheating, and burn the employer relationship permanently. Also banned by the honesty invariant. (ats-keywords.md, claim 4)
+12. Referrals and direct recruiter contact multiply response rates several-fold; the anonymous queue is the worst channel. Packages should name a human to contact when one is findable. (ats-myths.md, claim 4)
+
+## NL specifics (kept as a worked example; adapt to your own market)
+
+- Photo: optional in NL, omit by default; international and anonymized screening contexts support omitting it. Birthdate: omit in English applications. Nationality line: a "<nationality> (EU citizen, no work permit required)" line is recommended by Dutch university career guidance for non-Dutch surnames and costs nothing, when true. (ats-nl-norms.md, claim 2)
+- Language: English CVs are fine for English-language and international vacancies. A stated Dutch requirement is real; do not apply against it. State your actual level honestly. (ats-nl-norms.md, claim 3)
+- Cover letters: expected at NL SMEs and traineeship programs, read when submitted (about 83 percent), optional at big tech but a tailored one still helps. Default: every package includes a tailored letter unless the posting says not to send one. (ats-nl-norms.md, claim 4)
+- NL ATS landscape: Recruitee (Tellent), Homerun, SmartRecruiters, Bullhorn, plus Workday and SAP SuccessFactors at corporates. AFAS is an HR/ERP suite, not an ATS. Greenhouse and Lever appear mainly at NL branches of international firms. One clean parseable CV serves them all. (ats-nl-norms.md, claim 1)
+- Assessments: expect a short skills test at any company size; the full AI-video-plus-games flow mainly at large graduate and traineeship schemes. Package READMEs note this per employer where known. (ats-ai-2026.md, claim 2)
