@@ -24,7 +24,7 @@ Explain in plain words: what the machine does (hunts, filters, prepares; they pr
 
 ## Phase 1: the document harvest (replaces ~40 questions when it works)
 
-Ask them to drop into `inputs/onboarding-drops/` whatever exists of:
+Point them at the app's Onboarding panel (drag-and-drop upload; the saver stores files in `inputs/onboarding-drops/`), or they can copy files into that folder by hand. Ask for whatever exists of:
 D1. Current CV, and EVERY old CV or cover letter they still have (old applications are a goldmine of claims to verify or kill).
 D2. Diplomas, transcripts, grade lists (official beats self-made).
 D3. LinkedIn profile export (profile page, More, Save to PDF).

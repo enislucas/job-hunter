@@ -106,6 +106,7 @@
     </div>
     <div class="nav">
       <button data-p="overview" class="on">Overview</button>
+      <button data-p="onboard">Onboarding</button>
       <button data-p="apps">Applications</button>
       <button data-p="journal">Journal</button>
       <button data-p="prefs">Preferences</button>
@@ -115,7 +116,7 @@
       <button data-p="tips">Tips</button>
       <button data-p="about">How it works</button>
     </div>
-    <div class="foot"><span id="saverdot"></span><span id="savertxt">saver: checking...</span><br>Job Hunter <b>v2.0</b> · demo data · make it yours via <code>SETUP.md</code></div>
+    <div class="foot"><span id="saverdot"></span><span id="savertxt">saver: checking...</span><br>Job Hunter <b>v2.2</b> · demo data · make it yours via <code>SETUP.md</code></div>
   </div>
 
   <div class="main">
@@ -132,6 +133,19 @@
       </div>
       <div class="note" style="border-left-color:#f08a8a;border-color:rgba(240,138,138,.35)"><b style="color:#f08a8a">This is demo data.</b> Three fictional companies, fictional projects, all numbers marked demo. Follow <code>SETUP.md</code> to fill in your real profile, then say <code>Go</code> and this whole page regenerates from your own applications.</div>
       <div class="note"><b>How the app works in one line:</b> every card here is something you can act on: review a suggested application, log where an application stands, tune your preferences, take a skill check, or read the plan. Nothing is ever submitted for you.</div>
+    </section>
+
+    <section class="panel" id="p-onboard">
+      <h1>Onboarding</h1>
+      <div class="note"><div class="cardhead"><span class="cid">Docs</span>The document harvest (Phase 1 of your intake)</div>
+        <div class="kv"><b>Why</b><span>Documents beat memory. Every file you drop here becomes evidence rows your CVs can safely stand on; each good document replaces a dozen interview questions.</span>
+        <b>What</b><span>Old CVs and cover letters (all of them) &middot; diplomas, transcripts, grade lists &middot; LinkedIn PDF export (profile page, More, Save to PDF) &middot; recommendation letters &middot; certificates &middot; one piece of writing that sounds like you at your best.</span>
+        <b>Then</b><span>Open a Claude Code session in this folder and say Go: the assistant mines everything, then interviews you only about the gaps (see ONBOARDING-GUIDE.md).</span></div></div>
+      <div id="dz" style="border:2px dashed #2a3a55;border-radius:16px;padding:38px 20px;text-align:center;color:#8494ac;cursor:pointer;margin:14px 0;font-size:15px">
+        Drop files here, or click to choose<br><span class="sc">pdf, docx, txt, md, images &middot; 20 MB per file &middot; lands in <span class="path">inputs/onboarding-drops/</span></span>
+      </div>
+      <input type="file" id="dzfile" multiple style="display:none">
+      <div id="upfiles" class="sc">checking what has arrived...</div>
     </section>
 
     <section class="panel" id="p-apps">
@@ -486,8 +500,40 @@
 console.log('%c\u2b21 you found the console. now try clicking the logo seven times.','color:#b06bff');
 b.addEventListener('click',function(){n++;if(n===7){n=0;
 var t=document.createElement('div');t.style.cssText='position:fixed;inset:0;background:rgba(4,6,10,.92);z-index:99;display:flex;align-items:center;justify-content:center;padding:30px';
-t.innerHTML='<div style="max-width:520px;background:#0a0f1a;border:1px solid #b06bff;border-radius:16px;padding:26px 30px;font-size:15px;line-height:1.7"><div style="font-size:20px;font-weight:700;background:linear-gradient(90deg,#4a8fff,#b06bff,#e068ff);-webkit-background-clip:text;background-clip:text;color:transparent">The Hunter&#39;s Creed</div><p>Verify before you trust.<br>Commit before you forget.<br>Let the machine hunt, filter and write,<br>but never let it press send.<br><br>Rejection is data. Honesty is leverage.<br>And the second number on the overview<br>only ever moves by a human hand.</p><p style="color:#8494ac;font-size:12.5px">left here on purpose &middot; v2.0 &middot; click anywhere to close</p></div>';
+t.innerHTML='<div style="max-width:520px;background:#0a0f1a;border:1px solid #b06bff;border-radius:16px;padding:26px 30px;font-size:15px;line-height:1.7"><div style="font-size:20px;font-weight:700;background:linear-gradient(90deg,#4a8fff,#b06bff,#e068ff);-webkit-background-clip:text;background-clip:text;color:transparent">The Hunter&#39;s Creed</div><p>Verify before you trust.<br>Commit before you forget.<br>Let the machine hunt, filter and write,<br>but never let it press send.<br><br>Rejection is data. Honesty is leverage.<br>And the second number on the overview<br>only ever moves by a human hand.</p><p style="color:#8494ac;font-size:12.5px">left here on purpose &middot; v2.2 &middot; click anywhere to close</p></div>';
 t.addEventListener('click',function(){t.remove();});document.body.appendChild(t);}});})();
+</script>
+<script>
+(function(){
+  var dz=document.getElementById('dz'),inp=document.getElementById('dzfile'),list=document.getElementById('upfiles');
+  if(!dz)return;
+  function toast(m){var t=document.getElementById('toast');if(!t)return;t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2600);}
+  function refresh(){
+    fetch('/uploads').then(function(r){return r.json();}).then(function(j){
+      if(!j.ok){throw 0;}
+      list.innerHTML=j.files.length? 'Arrived ('+j.files.length+'): '+j.files.map(function(f){return '<span class="path">'+f.name+'</span> ('+f.kb+' KB)';}).join(' &middot; ')
+        : 'Nothing here yet. The demo saver works for real: drop something and watch it land.';
+    }).catch(function(){list.textContent='Saver offline: start it (see SETUP.md), then drop files here. Meanwhile you can copy files into inputs/onboarding-drops/ by hand.';});
+  }
+  function up(file){
+    if(file.size>20*1024*1024){toast(file.name+' is over the 20 MB cap.');return;}
+    var rd=new FileReader();
+    rd.onload=function(){
+      var b64=String(rd.result).split(',')[1]||'';
+      fetch('/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:file.name,content_base64:b64})})
+      .then(function(r){return r.json();}).then(function(j){
+        if(j.ok){toast('Uploaded '+(j.saved_as||file.name));refresh();}else{toast('Refused: '+(j.why||'unknown reason'));}
+      }).catch(function(){toast('Saver offline: copy the file into inputs/onboarding-drops/ by hand.');});
+    };
+    rd.readAsDataURL(file);
+  }
+  dz.addEventListener('click',function(){inp.click();});
+  inp.addEventListener('change',function(){[].slice.call(inp.files).forEach(up);inp.value='';});
+  dz.addEventListener('dragover',function(e){e.preventDefault();dz.style.borderColor='#b06bff';});
+  dz.addEventListener('dragleave',function(){dz.style.borderColor='#2a3a55';});
+  dz.addEventListener('drop',function(e){e.preventDefault();dz.style.borderColor='#2a3a55';[].slice.call(e.dataTransfer.files).forEach(up);});
+  refresh();
+})();
 </script>
 </body>
 </html>

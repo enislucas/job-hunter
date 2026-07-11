@@ -4,12 +4,15 @@ Also serves the whole Job Hunter folder read-only over http://127.0.0.1:7345/
 (dashboard.html by default), so the app runs same-origin with its saver and
 browser policies can never block a commit.
 
-Endpoints: GET /ping, POST /save {"name","content"}, GET /<any file under the folder>.
-Loopback only. Whitelisted save names only. Autostarts via the Startup shortcut
-JobHunter-Saver; the pipeline's gate step restarts it if down.
+Endpoints: GET /ping, POST /save {"name","content"}, POST /upload {"name","content_base64"}
+(document harvest for onboarding: PDF, DOCX, images, text into inputs/onboarding-drops/),
+GET /uploads (list what arrived), GET /<any file under the folder>.
+Loopback only. Whitelisted save names and upload extensions only. Autostarts via the
+Startup shortcut JobHunter-Saver; the pipeline's gate step restarts it if down.
 
 ROOT is resolved relative to this file, so the repo works wherever it is cloned.
 """
+import base64
 import json
 import re
 from datetime import datetime
@@ -19,9 +22,12 @@ from urllib.parse import unquote, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 DROPS = ROOT / "inputs" / "corrections-drops"
+ONBOARD = ROOT / "inputs" / "onboarding-drops"
 ARCH = ROOT / "archive" / "corrections"
 LOG = ROOT / "runner" / "saver.log"
 MAX_BYTES = 200_000
+UPLOAD_MAX = 28_000_000  # ~20 MB file after base64 inflation
+UPLOAD_EXT = {".pdf", ".docx", ".doc", ".txt", ".md", ".png", ".jpg", ".jpeg", ".rtf", ".odt"}
 
 TYPES = {
     ".html": "text/html; charset=utf-8", ".md": "text/plain; charset=utf-8",
@@ -82,6 +88,18 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(200); self._cors()
             self.send_header("Content-Type", "text/plain; charset=utf-8"); self.end_headers()
             self.wfile.write(body); return
+        if path == "/uploads":
+            try:
+                items = []
+                if ONBOARD.is_dir():
+                    for f in sorted(ONBOARD.iterdir()):
+                        if f.is_file() and f.name != "README.md":
+                            items.append({"name": f.name, "kb": round(f.stat().st_size / 1024)})
+                self._json(200, json.dumps({"ok": True, "files": items}).encode("utf-8"))
+            except Exception as e:  # noqa: BLE001
+                log(f"UPLOADS LIST ERROR {e}")
+                self._json(500, b'{"ok": false}')
+            return
         rel = path.lstrip("/") or "dashboard.html"
         try:
             target = (ROOT / rel).resolve()
@@ -100,6 +118,27 @@ class Handler(BaseHTTPRequestHandler):
             self._json(500, b'{"ok": false}')
 
     def do_POST(self):
+        if self.path == "/upload":
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                if n > UPLOAD_MAX:
+                    self._json(413, b'{"ok": false, "why": "file too large (20 MB cap)"}'); return
+                data = json.loads(self.rfile.read(n).decode("utf-8"))
+                name = Path(str(data["name"])).name
+                if Path(name).suffix.lower() not in UPLOAD_EXT:
+                    log(f"UPLOAD REFUSED {name}")
+                    self._json(403, b'{"ok": false, "why": "extension not allowed"}'); return
+                ONBOARD.mkdir(parents=True, exist_ok=True)
+                target = ONBOARD / name
+                if target.exists():
+                    target = ONBOARD / f"{Path(name).stem}-{stamp()}{Path(name).suffix}"
+                target.write_bytes(base64.b64decode(str(data["content_base64"])))
+                log(f"uploaded {target.name} ({target.stat().st_size} bytes)")
+                self._json(200, json.dumps({"ok": True, "saved_as": target.name}).encode("utf-8"))
+            except Exception as e:  # noqa: BLE001
+                log(f"UPLOAD ERROR {e}")
+                self._json(500, b'{"ok": false}')
+            return
         if self.path != "/save":
             self._json(404, b'{"ok": false}'); return
         try:
