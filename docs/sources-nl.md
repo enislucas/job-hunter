@@ -1,4 +1,4 @@
-# Sources: the read-only hunting handbook (Netherlands)
+﻿# Sources: the read-only hunting handbook (Netherlands)
 
 This is a real, useful Netherlands job-hunting handbook, kept as-is in the public template because it is genuinely handy. Scope: Netherlands, English-language internships, working-student, entry-level, and traineeships of 12 months or less, in Data Science and Operations Research. It shows how to search each source read-only, with no account and no automated application, ever. Prepare only, never submit. If you hunt in a different country or field, replace this file with your own equivalent.
 
@@ -10,7 +10,7 @@ Core titles: Data Analyst, Data Scientist, Data Engineer, Machine Learning Engin
 
 Level and contract modifiers: Intern, Internship, Working Student, Werkstudent (keep the Dutch legal term even in English searches, employers use it), Trainee, Traineeship, Graduate Programme, Junior, Entry Level, Starter.
 
-These match research\JOB-GLOSSARY.md, so title reasoning stays consistent across the pipeline.
+Title sets grow in research\JOB-GLOSSARY.md as your runs encounter them, so reasoning stays consistent across the pipeline.
 
 ---
 
